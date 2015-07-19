@@ -1,7 +1,7 @@
-<md-dialog aria-label="{{ isNew ? 'Create' : 'Edit' }} {{ec.modelName}}" flex="66">
+<md-dialog aria-label="{{ ec.isNew ? 'Create new' : 'Edit' }} {{ec.modelName}}" flex="66">
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2>{{ isNew ? 'Create' : 'Edit' }} {{ec.modelName}}</h2>
+            <h2>{{ ec.isNew ? 'Create new' : 'Edit' }} {{ec.modelName}}</h2>
             <span flex></span>
             <md-button class="md-icon-button" ng-click="ec.toggleShowHiddenFields()">
                 <md-tooltip>{{ec.showHiddenFields ? 'hide' : 'show'}} hidden fields</md-tooltip>
@@ -13,54 +13,7 @@
     <form name="editForm">
         <md-dialog-content>
             <div ng-repeat="pathName in ec.pathNames()" ng-init="path = ec.schema.paths[pathName]">
-                <div ng-switch="path.instance">
-
-                    <md-input-container ng-switch-when="Date">
-                        <label>{{pathName.titleize()}}</label>
-                        <input type="date"
-                               ng-required="path.options.required"
-                               ng-model="ec.model[pathName]">
-                    </md-input-container>
-
-                    <md-input-container ng-switch-when="Number">
-                        <label>{{pathName.titleize()}}</label>
-
-                        <input type="number"
-                               ng-required="path.options.required"
-                               ng-model="ec.model[pathName]">
-                    </md-input-container>
-                    <div ng-switch-when="Boolean">
-                        <md-checkbox ng-model="ec.model[pathName]"
-                                     ng-required="path.options.required"
-                                     aria-label="{{pathName.titleize()}}">
-                            {{pathName.titleize()}}
-                        </md-checkbox>
-                    </div>
-
-                    <md-input-container ng-switch-default>
-                        <md-select ng-if="path.options.ref"
-                                   ng-model="ec.model[pathName]"
-                                   ng-required="path.options.required"
-                                   md-on-open="ec.loadRef(path.options.ref)"
-                                   aria-label="{{pathName.titleize()}}">
-                            <md-select-label>
-                                {{ pathName + (ec.model[pathName] ? ': ' + ec.model[pathName] : '')}}
-                            </md-select-label>
-                            <md-option ng-value="ref._id"
-                                       ng-repeat="ref in ec.refs[path.options.ref]">
-                                {{ref | json}}
-                            </md-option>
-                        </md-select>
-
-                        <div ng-if="!path.options.ref">
-                            <label>{{pathName.titleize()}}</label>
-
-                            <input type="text"
-                                   ng-model="ec.model[pathName]"
-                                   ng-required="path.options.required">
-                        </div>
-                    </md-input-container>
-                </div>
+                <div ng-include="'inputsTemplate'"></div>
             </div>
         </md-dialog-content>
         <div class="md-actions" layout="row">
@@ -77,3 +30,104 @@
         </div>
     </form>
 </md-dialog>
+
+<script type="text/ng-template" id="inputsTemplate">
+    <div ng-switch="path.instance">
+
+        <md-input-container ng-switch-when="Number">
+            <label>{{pathName.titleize()}}</label>
+
+            <input type="number"
+                   ng-required="path.options.required && path.options.select !== false"
+                   ng-model="ec.model[pathName]">
+        </md-input-container>
+
+        <md-input-container ng-switch-when="Date">
+            <label>{{pathName.titleize()}}</label>
+            <input type="date"
+                   ng-required="path.options.required && path.options.select !== false"
+                   ng-model="ec.model[pathName]">
+        </md-input-container>
+
+        <div ng-switch-when="Boolean">
+            <md-checkbox ng-model="ec.model[pathName]"
+                         ng-required="path.options.required && path.options.select !== false"
+                         aria-label="{{pathName.titleize()}}">
+                {{pathName.titleize()}}
+            </md-checkbox>
+        </div>
+
+        <md-input-container ng-switch-when="Mixed">
+            <label>{{pathName.titleize()}} <span class="md-caption">(enter valid JSON)</span></label>
+
+            <textarea ng-required="path.options.required && path.options.select !== false"
+                      ng-model="ec.model[pathName]"
+                      json></textarea>
+        </md-input-container>
+
+        <div ng-switch-when="ObjectID">
+            <md-input-container ng-if="!path.options.ref">
+                <label>{{pathName.titleize()}}</label>
+
+                <input type="text"
+                       object-id
+                       ng-model="ec.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false">
+            </md-input-container>
+
+            <md-select ng-if="path.options.ref"
+                       ng-model="ec.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false"
+                       md-on-open="ec.loadRef(path.options.ref)"
+                       aria-label="{{pathName.titleize()}}">
+                <md-select-label>
+                    {{ pathName.titleize() }} {{ (ec.model[pathName] ? ': ' + ec.model[pathName] : '')}}
+                </md-select-label>
+                <md-option ng-value="ref._id"
+                           ng-repeat="ref in ec.refs[path.options.ref]">
+                    {{ref | json}}
+                </md-option>
+            </md-select>
+        </div>
+
+        <div ng-switch-when="String">
+            <md-select ng-if="path.options.enum"
+                       ng-model="ec.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false"
+                       aria-label="{{pathName.titleize()}}">
+                <md-select-label>
+                    {{ pathName.titleize() }} {{ (ec.model[pathName] ? ': ' + ec.model[pathName] : '')}}
+                </md-select-label>
+                <md-option ng-value="value" ng-repeat="value in path.options.enum">{{ value }}</md-option>
+            </md-select>
+
+            <md-input-container ng-if="!path.options.enum">
+                <label>{{pathName.titleize()}}</label>
+
+                <input type="text"
+                       ng-model="ec.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false">
+            </md-input-container>
+        </div>
+
+        <md-input-container ng-switch-when="Array" md-no-float>
+            <label>
+                {{pathName.titleize()}}
+                <span class="md-caption">(comma separated list of valid {{path.caster.instance}})</span>
+            </label>
+
+            <input type="text"
+                   ng-list
+                   ng-model="ec.model[pathName]"
+                   ng-required="path.options.required && path.options.select !== false">
+        </md-input-container>
+
+        <md-input-container ng-switch-default>
+            <label>{{pathName.titleize()}}</label>
+
+            <input type="text"
+                   ng-model="ec.model[pathName]"
+                   ng-required="path.options.required && path.options.select !== false">
+        </md-input-container>
+    </div>
+</script>

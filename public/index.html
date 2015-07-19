@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-controller="MainController as mc">
 <head>
-    <title>MESS - mongoose express scaffold </title>
+    <title>{{mc.title}}</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,21 +18,23 @@
     <link rel="stylesheet" href="stylesheets/style.css"/>
 </head>
 
-<body ng-app="app" layout="column" ng-controller="MainController as mc">
+<body layout="column">
 
 <md-toolbar layout="row">
     <md-button hide-gt-sm ng-click="mc.toggleList()" aria-label="Show Model List">
         <md-icon>menu</md-icon>
     </md-button>
     <div class="md-toolbar-tools">
-        <h1>MESS - mongoose express scaffold </h1>
+        <h1>{{mc.title}}</h1>
     </div>
 </md-toolbar>
 
 <div flex layout="row">
 
-    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
-        <md-subheader>Models</md-subheader>
+    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')"
+                class="md-whiteframe-z2"
+                md-component-id="left">
+        <h2 layout-padding class="md-title">Models</h2>
         <md-list>
             <md-list-item ng-repeat="modelName in mc.modelNames"
                           ng-click="mc.selectModel(modelName)"
@@ -60,6 +62,7 @@
 
 </div>
 
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/lodash/lodash.min.js"></script>
 <script src="bower_components/sugar/release/sugar-full.min.js"></script>
 <script src="bower_components/angular/angular.js"></script>

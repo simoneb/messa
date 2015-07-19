@@ -4,13 +4,19 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var api = require('./api');
 
-module.exports = function (mongoose) {
+module.exports = function (mongoose, options) {
   var app = express();
+
+  options = options || {};
 
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(express.static(path.join(__dirname, 'public')));
+
+  app.get('/config', function (req, res) {
+    res.send(options);
+  });
 
   app.use('/api', api(mongoose));
 

@@ -1,7 +1,15 @@
 (function () {
 
+  angular.bootstrap().invoke(function ($http) {
+    $http.get('config')
+        .success(function (config) {
+          angular.module('app.config', []).constant('CONFIG', config);
+          angular.bootstrap(document, ['app']);
+        });
+  });
+
   angular
-      .module('app', ['ngMaterial', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
+      .module('app', ['app.config', 'ngMaterial', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
       .config(function ($mdThemingProvider) {
         $mdThemingProvider.theme('default')
             .primaryPalette('brown')
@@ -9,6 +17,51 @@
       })
       .config(function ($httpProvider) {
         $httpProvider.interceptors.push('httpErrorInterceptor');
+      })
+      .run(function ($window, _) {
+        function resize() {
+          angular.element('#grid')
+              .css('height', parseInt(angular.element('#content').css('height'), 10) - 100);
+        }
+
+        angular.element($window).on('load resize', _.debounce(resize, 100));
+      })
+      .directive('json', function () {
+        return {
+          restrict: 'A',
+          require: 'ngModel',
+          link: function (scope, elm, attrs, ctrl) {
+            ctrl.$validators.json = function (modelValue, viewValue) {
+              if (ctrl.$isEmpty(modelValue)) {
+                // consider empty models to be valid
+                return true;
+              }
+
+              try {
+                angular.fromJson(viewValue);
+                return true;
+              } catch (err) {
+                return false;
+              }
+            };
+          }
+        };
+      })
+      .directive('objectId', function () {
+        return {
+          restrict: 'A',
+          require: 'ngModel',
+          link: function (scope, elm, attrs, ctrl) {
+            ctrl.$validators.objectId = function (modelValue, viewValue) {
+              if (ctrl.$isEmpty(modelValue)) {
+                // consider empty models to be valid
+                return true;
+              }
+
+              return /^[a-fA-F0-9]{24}$/.test(viewValue);
+            };
+          }
+        };
       })
       .factory('api', api)
       .factory('httpErrorInterceptor', httpErrorInterceptor)
@@ -56,9 +109,10 @@
     }
   }
 
-  function MainController(api, $mdSidenav, $mdBottomSheet, $mdDialog, $log, _) {
+  function MainController(CONFIG, api, $mdSidenav, $mdDialog, $log, _) {
     var mc = this;
 
+    mc.title = CONFIG.title || 'MESS - mongoose express scaffold';
     mc.selectedModelName = null;
     mc.schemas = null;
     mc.gridOptions = {
@@ -86,7 +140,6 @@
         selectModel(mc.modelNames[0]);
       });
     }
-
 
     function handleGridApiRegistration() {
       mc.gridApi.selection.on.rowSelectionChanged(null, function (row) {
@@ -251,9 +304,9 @@
   function httpErrorInterceptor($injector, $q) {
     return {
       responseError: function (res) {
-        var mdToast = $injector.get('$mdToast');
+        var $mdToast = $injector.get('$mdToast');
 
-        mdToast.show(mdToast.simple().content(res.data.message));
+        $mdToast.show($mdToast.simple().content(res.data.message));
 
         return $q.reject(res);
       }
