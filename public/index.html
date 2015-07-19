@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MESS - mongoose express scaffold </title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <link rel='stylesheet' href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic">
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css"/>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css">
+
+    <link rel="stylesheet" href="stylesheets/style.css"/>
+</head>
+
+<body ng-app="app" layout="column" ng-controller="MainController as mc">
+
+<md-toolbar layout="row">
+    <md-button hide-gt-sm ng-click="mc.toggleList()" aria-label="Show Model List">
+        <md-icon>menu</md-icon>
+    </md-button>
+    <div class="md-toolbar-tools">
+        <h1>MESS - mongoose express scaffold </h1>
+    </div>
+</md-toolbar>
+
+<div flex layout="row">
+
+    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')" class="md-whiteframe-z2" md-component-id="left">
+        <md-subheader>Models</md-subheader>
+        <md-list>
+            <md-list-item ng-repeat="modelName in mc.modelNames"
+                          ng-click="mc.selectModel(modelName)"
+                          ng-class="{'selected' : modelName === mc.selectedModelName }">
+                {{modelName}}
+            </md-list-item>
+        </md-list>
+    </md-sidenav>
+
+    <md-content flex id="content" layout-padding layout-margin>
+        <div layout="row">
+            <h2 class="md-headline">{{mc.selectedModelName}} model</h2>
+            <span flex></span>
+            <md-button class="md-fab md-primary md-mini" ng-click="mc.createModel()">
+                <md-tooltip>Create new {{mc.selectedModelName}}</md-tooltip>
+                <md-icon>create</md-icon>
+            </md-button>
+        </div>
+        <div id="grid"
+             ui-grid-selection
+             ui-grid-resize-columns
+             ui-grid-auto-resize
+             ui-grid="mc.gridOptions"></div>
+    </md-content>
+
+</div>
+
+<script src="bower_components/lodash/lodash.min.js"></script>
+<script src="bower_components/sugar/release/sugar-full.min.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-material/angular-material.js"></script>
+
+<script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

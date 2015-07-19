@@ -1,0 +1,21 @@
+{
+  "name": "mess",
+  "version": "0.0.1",
+  "authors": [
+    "Simone Busoli <simone.busoli@gmail.com>"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "bower update",
+    "prestart": "npm update"
+  },
+  "dependencies": {
+    "body-parser": "~1.13.2",
+    "debug": "~2.2.0",
+    "lodash": "^3.10.0",
+    "morgan": "~1.6.1"
+  },
+  "peerDependencies": {
+    "express": "^4.x"
+  }
+}
