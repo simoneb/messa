@@ -206,19 +206,19 @@
             return {
               name: pathName,
               field: pathName,
-              type: getPathType(path),
+              type: getColumnType(path),
               visible: pathName !== schema.options.versionKey
             };
           }).value();
     }
 
-    function getPathType(path) {
+    function getColumnType(path) {
       switch (path.instance) {
         case 'String':
         case 'Boolean':
         case 'Number':
         case 'Date':
-          return path.instance[0].toLowerCase() + path.instance.substr[1]
+          return path.instance.toLowerCase();
         default:
           return 'object'
       }
