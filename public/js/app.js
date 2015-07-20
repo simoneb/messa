@@ -165,7 +165,10 @@
     function activate() {
       getSchemas().then(function (schemas) {
         mc.modelNames = _.keys(schemas);
-        selectModel(mc.modelNames[0]);
+
+        if (mc.modelNames.length) {
+          selectModel(mc.modelNames[0]);
+        }
       });
     }
 
