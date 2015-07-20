@@ -6,11 +6,11 @@
   ],
   "license": "MIT",
   "scripts": {
-    "postinstall": "bower update",
-    "prestart": "npm update"
+    "postinstall": "bower update"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
+    "bower": "^1.4.1",
     "debug": "~2.2.0",
     "lodash": "^3.10.0",
     "morgan": "~1.6.1"

@@ -1,0 +1,103 @@
+<div ng-repeat="(pathName, path) in mc.rootPaths">
+    <div ng-switch="path.instance">
+        <md-input-container ng-switch-when="Number">
+            <label>{{pathName.titleize()}}</label>
+
+            <input type="number"
+                   ng-required="path.options.required && path.options.select !== false"
+                   ng-model="mc.model[pathName]">
+        </md-input-container>
+
+        <md-input-container ng-switch-when="Date">
+            <label>{{pathName.titleize()}}</label>
+            <input type="date"
+                   ng-required="path.options.required && path.options.select !== false"
+                   ng-model="mc.model[pathName]">
+        </md-input-container>
+
+        <div ng-switch-when="Boolean">
+            <md-checkbox ng-model="mc.model[pathName]"
+                         ng-required="path.options.required && path.options.select !== false"
+                         aria-label="{{pathName.titleize()}}">
+                {{pathName.titleize()}}
+            </md-checkbox>
+        </div>
+
+        <md-input-container ng-switch-when="Mixed">
+            <label>{{pathName.titleize()}} <span class="md-caption">(enter valid JSON)</span></label>
+
+            <textarea ng-required="path.options.required && path.options.select !== false"
+                      ng-model="mc.model[pathName]"
+                      json></textarea>
+        </md-input-container>
+
+        <div ng-switch-when="ObjectID">
+            <md-input-container ng-if="!path.options.ref">
+                <label>{{pathName.titleize()}}</label>
+
+                <input type="text"
+                       object-id
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false">
+            </md-input-container>
+
+            <md-select ng-if="path.options.ref"
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false"
+                       md-on-open="mc.loadRef(path.options.ref)"
+                       aria-label="{{pathName.titleize()}}">
+                <md-select-label>
+                    {{ pathName.titleize() }} {{ (mc.model[pathName] ? ': ' + mc.model[pathName] : '')}}
+                </md-select-label>
+                <md-option ng-value="ref._id"
+                           ng-repeat="ref in mc.refs[path.options.ref]">
+                    {{ref | json}}
+                </md-option>
+            </md-select>
+        </div>
+
+        <div ng-switch-when="String">
+            <md-select ng-if="path.options.enum"
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false"
+                       aria-label="{{pathName.titleize()}}">
+                <md-select-label>
+                    {{ pathName.titleize() }} {{ (mc.model[pathName] ? ': ' + mc.model[pathName] : '')}}
+                </md-select-label>
+                <md-option ng-value="value" ng-repeat="value in path.options.enum">{{ value }}</md-option>
+            </md-select>
+
+            <md-input-container ng-if="!path.options.enum">
+                <label>{{pathName.titleize()}}</label>
+
+                <input type="text"
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false">
+            </md-input-container>
+        </div>
+
+        <md-input-container ng-switch-when="Array" md-no-float>
+            <label>
+                {{pathName.titleize()}}
+                <span class="md-caption">(comma separated list of valid {{path.caster.instance}})</span>
+            </label>
+
+            <input type="text"
+                   ng-list
+                   ng-model="mc.model[pathName]"
+                   ng-required="path.options.required && path.options.select !== false">
+        </md-input-container>
+
+        <md-input-container ng-switch-default>
+            <label>{{pathName.titleize()}}</label>
+
+            <input type="text"
+                   ng-model="mc.model[pathName]"
+                   ng-required="path.options.required && path.options.select !== false">
+        </md-input-container>
+    </div>
+</div>
+<div ng-repeat="(rootPathName, paths) in mc.nestedPaths">
+    <h2 class="md-title">{{ rootPathName }}</h2>
+    <mess-model-proxy model="mc.model[rootPathName]" paths="paths"></mess-model-proxy>
+</div>

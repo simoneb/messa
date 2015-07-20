@@ -1,4 +1,4 @@
-(function () {
+(function (angular, _) {
 
   angular.bootstrap().invoke(function ($http) {
     $http.get('config')
@@ -10,6 +10,7 @@
 
   angular
       .module('app', ['app.config', 'ngMaterial', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
+      .constant('_', _)
       .config(function ($mdThemingProvider) {
         $mdThemingProvider.theme('default')
             .primaryPalette('brown')
@@ -63,11 +64,38 @@
           }
         };
       })
+      .directive('messModel', function () {
+        return {
+          restrict: 'E',
+          scope: {
+            model: '=',
+            paths: '='
+          },
+          templateUrl: 'templates/model.html',
+          controller: 'ModelController',
+          controllerAs: 'mc',
+          bindToController: true
+        }
+      })
+      .directive('messModelProxy', function ($compile) {
+        return {
+          restrict: 'E',
+          scope: {
+            model: '=',
+            paths: '='
+          },
+          template: '<div></div>',
+          link: function (scope, element, attrs) {
+            element.append("<mess-model model='model' paths='paths'></mess-model>");
+            $compile(element.contents())(scope);
+          }
+        }
+      })
       .factory('api', api)
       .factory('httpErrorInterceptor', httpErrorInterceptor)
-      .constant('_', _)
       .controller('EditController', EditController)
-      .controller('MainController', MainController);
+      .controller('MainController', MainController)
+      .controller('ModelController', ModelController);
 
   function api($http, _) {
     return {
@@ -301,6 +329,30 @@
     }
   }
 
+  function ModelController() {
+    var mc = this;
+
+    mc.rootPaths = _.omit(mc.paths, function (value, key) {
+      return /\./.test(key);
+    });
+
+    mc.nestedPaths = _(mc.paths)
+        .pick(function (value, key) {
+          return /\./.test(key);
+        })
+        .groupBy(function (value, key) {
+          return key.split('.')[0];
+        })
+        .mapValues(function (paths, parentKey) {
+          return _.reduce(paths.map(function (path) {
+            var res = {};
+            res[path.path.replace(parentKey + '.', '')] = path;
+            return res;
+          }), _.merge, {});
+        })
+        .value();
+  }
+
   function httpErrorInterceptor($injector, $q) {
     return {
       responseError: function (res) {
@@ -313,4 +365,4 @@
     }
   }
 
-})();
+})(angular, _);
