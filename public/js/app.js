@@ -70,7 +70,8 @@
           restrict: 'E',
           scope: {
             model: '=',
-            paths: '='
+            paths: '=',
+            showHiddenFields: '='
           },
           link: function (scope, element, attrs, ctrls) {
             ctrls[1].form = ctrls[0];
@@ -86,13 +87,23 @@
           restrict: 'E',
           scope: {
             model: '=',
-            paths: '='
+            paths: '=',
+            showHiddenFields: '='
           },
           template: '<div></div>',
           link: function (scope, element, attrs) {
-            element.append("<mess-model model='model' paths='paths'></mess-model>");
+            element.append("<mess-model model='model' paths='paths' show-hidden-fields='showHiddenFields'></mess-model>");
             $compile(element.contents())(scope);
           }
+        }
+      })
+      .filter('showHiddenModelFields', function () {
+        return function (paths, show) {
+          if (show) return paths;
+
+          return _.pick(paths, function (value, key) {
+            return !/^_/.test(key);
+          });
         }
       })
       .factory('api', api)
@@ -279,18 +290,9 @@
     ec.isNew = !ec.model._id;
     ec.showHiddenFields = false;
 
-    ec.pathNames = function () {
-      return _.keys(ec.schema.paths).filter(function (pathName) {
-        return ec.showHiddenFields || !/^_/.test(pathName);
-      });
-    };
-
-    ec.refs = {};
-
     ec.save = save;
     ec.cancel = cancel;
     ec.delete = _delete;
-    ec.loadRef = loadRef;
     ec.toggleShowHiddenFields = toggleShowHiddenFields;
 
     function save() {
@@ -317,12 +319,6 @@
           });
     }
 
-    function loadRef(modelName) {
-      return api.getModelData(modelName).then(function (data) {
-        ec.refs[modelName] = data;
-      });
-    }
-
     function createOrUpdate() {
       if (ec.isNew) {
         return api.createModel(ec.modelName, ec.model);
@@ -336,8 +332,12 @@
     }
   }
 
-  function ModelController() {
+  function ModelController(api) {
     var mc = this;
+
+    mc.refs = {};
+
+    mc.loadRef = loadRef;
 
     mc.rootPaths = _.omit(mc.paths, function (value, key) {
       return /\./.test(key);
@@ -358,6 +358,12 @@
           }), _.merge, {});
         })
         .value();
+
+    function loadRef(modelName) {
+      api.getModelData(modelName).then(function (data) {
+        mc.refs[modelName] = data;
+      });
+    }
   }
 
   function httpErrorInterceptor($injector, $q) {

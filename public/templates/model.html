@@ -1,4 +1,4 @@
-<div ng-repeat="(pathName, path) in mc.rootPaths">
+<div ng-repeat="(pathName, path) in mc.rootPaths | showHiddenModelFields:mc.showHiddenFields">
     <div ng-switch="path.instance">
         <md-input-container ng-switch-when="Number">
             <label>{{pathName.titleize()}}</label>
@@ -56,7 +56,6 @@
             </md-input-container>
 
             <md-select ng-if="path.options.ref"
-                       name="{{path.path}}"
                        ng-model="mc.model[pathName]"
                        ng-required="path.options.required && path.options.select !== false"
                        md-on-open="mc.loadRef(path.options.ref)"
@@ -68,13 +67,11 @@
                            ng-repeat="ref in mc.refs[path.options.ref]">
                     {{ref | json}}
                 </md-option>
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-select>
         </div>
 
         <div ng-switch-when="String">
             <md-select ng-if="path.options.enum"
-                       name="{{path.path}}"
                        ng-model="mc.model[pathName]"
                        ng-required="path.options.required && path.options.select !== false"
                        aria-label="{{pathName.titleize()}}">
@@ -82,7 +79,6 @@
                     {{ pathName.titleize() }} {{ (mc.model[pathName] ? ': ' + mc.model[pathName] : '')}}
                 </md-select-label>
                 <md-option ng-value="value" ng-repeat="value in path.options.enum">{{ value }}</md-option>
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-select>
 
             <md-input-container ng-if="!path.options.enum">
@@ -125,9 +121,10 @@
 
     </div>
 </div>
-<div ng-repeat="(rootPathName, paths) in mc.nestedPaths">
+<div ng-repeat="(rootPathName, paths) in mc.nestedPaths | showHiddenModelFields:mc.showHiddenFields">
     <h2 class="md-title">{{ rootPathName }}</h2>
-    <mess-model-proxy model="mc.model[rootPathName]" paths="paths"></mess-model-proxy>
+    <mess-model-proxy model="mc.model[rootPathName]" paths="paths"
+                      show-hidden-fields="mc.showHiddenFields"></mess-model-proxy>
 </div>
 <script type="text/ng-template" id="mess-model-messages">
     <div ng-message="required">This field is required</div>
