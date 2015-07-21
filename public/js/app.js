@@ -9,7 +9,7 @@
   });
 
   angular
-      .module('app', ['app.config', 'ngMaterial', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
+      .module('app', ['app.config', 'ngMaterial', 'ngMessages', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
       .constant('_', _)
       .config(function ($mdThemingProvider) {
         $mdThemingProvider.theme('default')
@@ -66,10 +66,14 @@
       })
       .directive('messModel', function () {
         return {
+          require: ['^form', 'messModel'],
           restrict: 'E',
           scope: {
             model: '=',
             paths: '='
+          },
+          link: function (scope, element, attrs, ctrls) {
+            ctrls[1].form = ctrls[0];
           },
           templateUrl: 'templates/model.html',
           controller: 'ModelController',
