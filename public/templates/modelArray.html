@@ -1,0 +1,24 @@
+<div class="md-whiteframe-z2" layout-padding>
+    <div layout="row">
+
+        <h2 class="md-title">{{ mac.rootPathName }}</h2>
+        <md-button class="md-icon-button" ng-click="mac.add()">
+            <md-tooltip>Add new item</md-tooltip>
+            <md-icon>add_circle_outline</md-icon>
+        </md-button>
+    </div>
+    <div ng-repeat="model in mac.model" ng-init="localPaths = mac.getPaths($index)">
+        <div layout="row">
+            <h3 class="md-subhead">Item #{{$index}}</h3>
+            <md-button class="md-icon-button" ng-click="mac.remove(model)">
+                <md-tooltip>Remove item</md-tooltip>
+                <md-icon>remove_circle_outline</md-icon>
+            </md-button>
+        </div>
+        <mess-model-proxy model="model"
+                          paths="localPaths"
+                          show-hidden-fields="mac.showHiddenFields">
+        </mess-model-proxy>
+        <md-divider ng-if="!$last"></md-divider>
+    </div>
+</div>

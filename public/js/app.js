@@ -97,6 +97,34 @@
           }
         }
       })
+      .directive('messModelArray', function () {
+        return {
+          restrict: 'E',
+          scope: {
+            model: '=',
+            paths: '=',
+            rootPathName: '=',
+            showHiddenFields: '='
+          },
+          templateUrl: 'templates/modelArray.html',
+          controller: 'ModelArrayController',
+          controllerAs: 'mac',
+          bindToController: true
+        }
+      })
+      .directive('coerceDate', function () {
+        return {
+          restrict: 'A',
+          link: function (scope, element, attrs) {
+            var split = attrs.coerceDate.split(',');
+            var model = scope.$eval(split[0]);
+            var pathName = scope.$eval(split[1]);
+
+            if (model[pathName])
+              model[pathName] = new Date(model[pathName]);
+          }
+        }
+      })
       .filter('showHiddenModelFields', function () {
         return function (paths, show) {
           if (show) return paths;
@@ -110,7 +138,8 @@
       .factory('httpErrorInterceptor', httpErrorInterceptor)
       .controller('EditController', EditController)
       .controller('MainController', MainController)
-      .controller('ModelController', ModelController);
+      .controller('ModelController', ModelController)
+      .controller('ModelArrayController', ModelArrayController);
 
   function api($http, _) {
     return {
@@ -338,6 +367,7 @@
     mc.refs = {};
 
     mc.loadRef = loadRef;
+    mc.makeCasterPaths = makeCasterPaths;
 
     mc.rootPaths = _.omit(mc.paths, function (value, key) {
       return /\./.test(key);
@@ -362,6 +392,39 @@
     function loadRef(modelName) {
       api.getModelData(modelName).then(function (data) {
         mc.refs[modelName] = data;
+      });
+    }
+
+    function makeCasterPaths(model, path) {
+      var obj = {};
+
+      model.forEach(function (e, i) {
+        obj[i] = path.caster;
+      });
+
+      return obj;
+    }
+  }
+
+  function ModelArrayController(_) {
+    var mac = this;
+
+    mac.add = add;
+    mac.remove = remove;
+    mac.getPaths = getPaths;
+
+    function add() {
+      mac.model.push({});
+    }
+
+    function remove(model) {
+      mac.model.splice(mac.model.indexOf(model), 1);
+    }
+
+    function getPaths($index) {
+      return _.mapValues(angular.copy(mac.paths), function(path) {
+        path.path = mac.rootPathName + '.' + $index + '.' + path.path;
+        return path;
       });
     }
   }

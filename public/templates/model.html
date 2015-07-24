@@ -1,5 +1,29 @@
 <div ng-repeat="(pathName, path) in mc.rootPaths | showHiddenModelFields:mc.showHiddenFields">
     <div ng-switch="path.instance">
+
+        <div ng-switch-when="String">
+            <md-select ng-if="path.options.enum"
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false"
+                       aria-label="{{pathName.titleize()}}">
+                <md-select-label>
+                    {{ pathName.titleize() }} {{ (mc.model[pathName] ? ': ' + mc.model[pathName] : '')}}
+                </md-select-label>
+                <md-option ng-value="value" ng-repeat="value in path.options.enum">{{ value }}</md-option>
+            </md-select>
+
+            <md-input-container ng-if="!path.options.enum">
+                <label>{{pathName.titleize()}}</label>
+
+                <input type="text"
+                       name="{{path.path}}"
+                       ng-model="mc.model[pathName]"
+                       ng-required="path.options.required && path.options.select !== false">
+
+                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+            </md-input-container>
+        </div>
+
         <md-input-container ng-switch-when="Number">
             <label>{{pathName.titleize()}}</label>
 
@@ -16,6 +40,7 @@
             <input type="date"
                    name="{{path.path}}"
                    ng-required="path.options.required && path.options.select !== false"
+                   coerce-date="mc.model,pathName"
                    ng-model="mc.model[pathName]">
 
             <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
@@ -30,17 +55,6 @@
                 <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-checkbox>
         </div>
-
-        <md-input-container ng-switch-when="Mixed">
-            <label>{{pathName.titleize()}} <span class="md-caption">(enter valid JSON)</span></label>
-
-            <textarea ng-required="path.options.required && path.options.select !== false"
-                      name="{{path.path}}"
-                      ng-model="mc.model[pathName]"
-                      json></textarea>
-
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
-        </md-input-container>
 
         <div ng-switch-when="ObjectID">
             <md-input-container ng-if="!path.options.ref">
@@ -70,53 +84,49 @@
             </md-select>
         </div>
 
-        <div ng-switch-when="String">
-            <md-select ng-if="path.options.enum"
-                       ng-model="mc.model[pathName]"
-                       ng-required="path.options.required && path.options.select !== false"
-                       aria-label="{{pathName.titleize()}}">
-                <md-select-label>
-                    {{ pathName.titleize() }} {{ (mc.model[pathName] ? ': ' + mc.model[pathName] : '')}}
-                </md-select-label>
-                <md-option ng-value="value" ng-repeat="value in path.options.enum">{{ value }}</md-option>
-            </md-select>
+        <md-input-container ng-switch-when="Mixed">
+            <label>{{pathName.titleize()}} <span class="md-caption">(enter valid JSON)</span></label>
 
-            <md-input-container ng-if="!path.options.enum">
-                <label>{{pathName.titleize()}}</label>
+            <textarea ng-required="path.options.required && path.options.select !== false"
+                      name="{{path.path}}"
+                      ng-model="mc.model[pathName]"
+                      json>
+            </textarea>
+
+            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+        </md-input-container>
+
+        <div ng-switch-when="Array">
+            <md-input-container
+                    ng-if="['String', 'Number', 'Date', 'Boolean', 'ObjectID', 'Mixed'].indexOf(path.caster.instance) !== -1"
+                    md-no-float>
+                <label>
+                    {{pathName.titleize()}}
+                    <span class="md-caption">(comma separated list of valid {{path.caster.instance}})</span>
+                </label>
 
                 <input type="text"
                        name="{{path.path}}"
+                       ng-list
                        ng-model="mc.model[pathName]"
                        ng-required="path.options.required && path.options.select !== false">
 
                 <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-input-container>
+
+            <mess-model-array ng-if="!path.caster.instance"
+                              model="mc.model[pathName]"
+                              root-path-name="pathName"
+                              paths="path.schema.paths"
+                              show-hidden-fields="mc.showHiddenFields">
+            </mess-model-array>
+
         </div>
-
-        <md-input-container ng-switch-when="Array" md-no-float>
-            <label>
-                {{pathName.titleize()}}
-                <span class="md-caption">(comma separated list of valid {{path.caster.instance}})</span>
-            </label>
-
-            <input type="text"
-                   name="{{path.path}}"
-                   ng-list
-                   ng-model="mc.model[pathName]"
-                   ng-required="path.options.required && path.options.select !== false">
-
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
-        </md-input-container>
 
         <md-input-container ng-switch-default>
             <label>{{pathName.titleize()}}</label>
 
-            <input type="text"
-                   name="{{path.path}}"
-                   ng-model="mc.model[pathName]"
-                   ng-required="path.options.required && path.options.select !== false">
-
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+            <h3 class="md-title">Cannot handle this field</h3>
         </md-input-container>
 
     </div>
@@ -126,8 +136,10 @@
     <mess-model-proxy model="mc.model[rootPathName]" paths="paths"
                       show-hidden-fields="mc.showHiddenFields"></mess-model-proxy>
 </div>
+
 <script type="text/ng-template" id="mess-model-messages">
     <div ng-message="required">This field is required</div>
-    <div ng-message="objectId">This field should be a valid MongoDB ObjectID</div>
+    <div ng-message="objectId">This field should contain a valid MongoDB ObjectID</div>
     <div ng-message="json">This field should contain valid JSON</div>
+    <div ng-message="date">This field should contain a valid date</div>
 </script>
