@@ -34,7 +34,9 @@
             <input type="number"
                    name="{{path.path}}"
                    ng-required="path.options.required && path.options.select !== false"
-                   ng-model="mc.model[pathName]">
+                   ng-model="mc.model[pathName]"
+                   ng-max="path.options.max"
+                   ng-min="path.options.min">
 
             <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
         </md-input-container>
@@ -148,4 +150,6 @@
     <div ng-message="date">This field should contain a valid date</div>
     <div ng-message="minlength">This field is too short</div>
     <div ng-message="maxlength">This field is too long</div>
+    <div ng-message="max">This field's value is too large</div>
+    <div ng-message="min">This field's value is too low</div>
 </script>
