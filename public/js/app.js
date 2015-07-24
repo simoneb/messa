@@ -181,11 +181,13 @@
     }
   }
 
-  function MainController(CONFIG, api, $mdSidenav, $mdDialog, $log, _) {
+  function MainController($scope, CONFIG, api, $mdMedia, $mdDialog, $log, _) {
     var mc = this;
 
     mc.title = CONFIG.title || 'MESS - mongoose express scaffold';
     mc.selectedModelName = null;
+
+    mc.isLockedOpen = $mdMedia('gt-sm');
     mc.schemas = null;
     mc.gridOptions = {
       // selection
@@ -202,7 +204,7 @@
 
     mc.selectModel = selectModel;
     mc.createModel = createModel;
-    mc.toggleList = toggleList;
+    mc.toggleMenu = toggleMenu;
 
     activate();
 
@@ -260,8 +262,8 @@
           });
     }
 
-    function toggleList() {
-      $mdSidenav('left').toggle();
+    function toggleMenu() {
+      mc.isLockedOpen = !mc.isLockedOpen;
     }
 
     function selectModel(modelName) {
@@ -271,8 +273,6 @@
       mc.gridOptions.columnDefs = createGridColumns(mc.selectedSchema);
 
       getModelData(mc.selectedModelName, mc.selectedSchema);
-
-      mc.toggleList();
     }
 
     function createGridColumns(schema) {

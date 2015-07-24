@@ -21,7 +21,7 @@
 <body layout="column">
 
 <md-toolbar layout="row">
-    <md-button hide-gt-sm ng-click="mc.toggleList()" aria-label="Show Model List">
+    <md-button ng-click="mc.toggleMenu()" aria-label="Toggle menu">
         <md-icon>menu</md-icon>
     </md-button>
     <div class="md-toolbar-tools">
@@ -31,9 +31,7 @@
 
 <div flex layout="row">
 
-    <md-sidenav md-is-locked-open="$mdMedia('gt-sm')"
-                class="md-whiteframe-z2"
-                md-component-id="left">
+    <md-sidenav md-is-locked-open="mc.isLockedOpen" class="md-whiteframe-z2">
         <h2 layout-padding class="md-title">Models</h2>
         <md-list>
             <md-list-item ng-repeat="modelName in mc.modelNames"
