@@ -43,13 +43,13 @@
     </md-sidenav>
 
     <md-content flex id="content" ng-show="mc.selectedModelName" layout-padding layout-margin>
-        <div layout="row">
-            <h2 class="md-headline">{{mc.selectedModelName}} model</h2>
-            <span flex></span>
+        <div layout="row" layout-align="start center">
             <md-button class="md-fab md-primary md-mini" ng-click="mc.createModel()">
                 <md-tooltip>Create new {{mc.selectedModelName}}</md-tooltip>
                 <md-icon>create</md-icon>
-            </md-button>
+            </md-button> <h2 class="md-headline">{{mc.selectedModelName}} model</h2>
+            <span flex></span>
+
         </div>
         <div id="grid"
              ui-grid-selection

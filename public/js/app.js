@@ -11,11 +11,6 @@
   angular
       .module('app', ['app.config', 'ngMaterial', 'ngMessages', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
       .constant('_', _)
-      .config(function ($mdThemingProvider) {
-        $mdThemingProvider.theme('default')
-            .primaryPalette('brown')
-            .accentPalette('red');
-      })
       .config(function ($httpProvider) {
         $httpProvider.interceptors.push('httpErrorInterceptor');
       })
