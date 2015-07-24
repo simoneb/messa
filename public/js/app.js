@@ -99,12 +99,16 @@
       })
       .directive('messModelArray', function () {
         return {
+          require: ['^form', 'messModelArray'],
           restrict: 'E',
           scope: {
             model: '=',
             paths: '=',
             rootPathName: '=',
             showHiddenFields: '='
+          },
+          link: function (scope, element, attrs, ctrls) {
+            ctrls[1].form = ctrls[0];
           },
           templateUrl: 'templates/modelArray.html',
           controller: 'ModelArrayController',
@@ -415,10 +419,12 @@
 
     function add() {
       mac.model.push({});
+      mac.form.$setDirty();
     }
 
     function remove(model) {
       mac.model.splice(mac.model.indexOf(model), 1);
+      mac.form.$setDirty();
     }
 
     function getPaths($index) {
