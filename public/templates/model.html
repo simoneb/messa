@@ -72,7 +72,8 @@
                        name="{{path.path}}"
                        object-id
                        ng-model="mc.model[pathName]"
-                       ng-required="path.options.required && path.options.select !== false">
+                       ng-required="path.options.required && path.options.select !== false"
+                       ng-disabled="path.options.auto">
 
                 <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-input-container>
