@@ -47,7 +47,9 @@
                    name="{{path.path}}"
                    ng-required="path.options.required && path.options.select !== false"
                    coerce-date="mc.model,pathName"
-                   ng-model="mc.model[pathName]">
+                   ng-model="mc.model[pathName]"
+                   ng-max="path.options.max"
+                   ng-min="path.options.min">
 
             <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
         </md-input-container>
