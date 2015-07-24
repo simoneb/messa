@@ -1,0 +1,20 @@
+<md-dialog aria-label="message">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{message}}</h2>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <ul>
+            <li ng-repeat="(_, value) in errors">
+                [{{value.kind}}] {{value.message}}
+            </li>
+        </ul>
+    </md-dialog-content>
+    <div class="md-actions" layout="row">
+        <span flex></span>
+        <md-button ng-click="close()" class="md-primary">
+            OK
+        </md-button>
+    </div>
+</md-dialog>

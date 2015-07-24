@@ -422,19 +422,44 @@
     }
 
     function getPaths($index) {
-      return _.mapValues(angular.copy(mac.paths), function(path) {
+      return _.mapValues(angular.copy(mac.paths), function (path) {
         path.path = mac.rootPathName + '.' + $index + '.' + path.path;
         return path;
       });
     }
   }
 
-  function httpErrorInterceptor($injector, $q) {
+  function httpErrorInterceptor($injector, $q, _, $rootScope) {
     return {
       responseError: function (res) {
         var $mdToast = $injector.get('$mdToast');
+        var $mdDialog = $injector.get('$mdDialog');
 
-        $mdToast.show($mdToast.simple().content(res.data.message));
+        var isMongooseValidationError = res.data && res.data.error && res.data.error.name === 'ValidationError';
+
+        var preset = $mdToast.simple()
+            .content(res.data && res.data.message || 'Unknown error');
+
+        if (isMongooseValidationError) {
+          preset.action('Details');
+        }
+
+        var toast = $mdToast.show(preset);
+
+        if (isMongooseValidationError) {
+          toast.then(function () {
+            var error = res.data.error;
+
+            $mdDialog.show({
+              templateUrl: 'templates/errorDialog.html',
+              scope: angular.extend(
+                  $rootScope.$new(),
+                  res.data.error,
+                  { close: $mdDialog.hide.bind($mdDialog) }
+              )
+            });
+          });
+        }
 
         return $q.reject(res);
       }
