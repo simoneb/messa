@@ -18,7 +18,11 @@
                 <input type="text"
                        name="{{path.path}}"
                        ng-model="mc.model[pathName]"
-                       ng-required="path.options.required && path.options.select !== false">
+                       ng-required="path.options.required && path.options.select !== false"
+                       ng-attr-md-maxlength="path.options.maxlength"
+                       ng-attr-md-minlength="path.options.minlength"
+                       ng-minlength="path.options.minlength"
+                       ng-maxlength="path.options.maxlength">
 
                 <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
             </md-input-container>
@@ -142,4 +146,6 @@
     <div ng-message="objectId">This field should contain a valid MongoDB ObjectID</div>
     <div ng-message="json">This field should contain valid JSON</div>
     <div ng-message="date">This field should contain a valid date</div>
+    <div ng-message="minlength">This field is too short</div>
+    <div ng-message="maxlength">This field is too long</div>
 </script>
