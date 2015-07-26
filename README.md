@@ -5,7 +5,7 @@ messa is an ExpressJS app to scaffold a CRUD UI for your mongoose models built w
 
 ## Demo
 
-You can see a live demo [here](https://messa-demo.herokuapp.com/)
+You can see a live demo [here](https://messa-demo.herokuapp.com/) and its source code [here](https://github.com/simoneb/messa-demo)
 
 ## Installation
 
@@ -26,6 +26,12 @@ app.use('/messa', messa(mongoose));
 ```js
 messa(mongoose).listen(3000);
 ```
+
+## How it works
+
+messa inspects your mongoose models and automatically generates a UI to perform CRUD operations on them.  
+
+The UI is built with angular.js, angular-material and angular-ui-grid.
 
 ## API
 
