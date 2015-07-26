@@ -1,7 +1,11 @@
 messa - mongoose express scaffold with angular.js
 ====
 
-messa is an ExpressJS app to scaffold a CRUD UI for your mongoose models built with angular.js
+messa is an ExpressJS app to scaffold a CRUD UI for your mongoose models built with angular.js  
+
+## Demo
+
+You can see a live demo [here](https://messa-demo.herokuapp.com/)
 
 ## Installation
 
