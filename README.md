@@ -13,7 +13,7 @@ You can see a live demo [here](https://messa-demo.herokuapp.com/) and its source
 
 ## Usage
 
-messa is an ExpressJS application, as such it can either be used standalone or mounted into an existing application
+messa is an ExpressJS application, as such it can either be used standalone or mounted into an existing application. If you have an existing application which uses mongoose you will most likely want to mount it there.
 
 ### Mounted
 
