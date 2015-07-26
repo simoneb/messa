@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" ng-controller="MainController as mc">
 <head>
-    <title>{{mc.title}}</title>
+    <title>{{mc.config.pageTitle | unsafe }}</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,7 +25,7 @@
         <md-button class="md-icon-button" ng-click="mc.toggleMenu()" aria-label="Toggle menu">
             <md-icon>menu</md-icon>
         </md-button>
-        <h1>{{mc.title}}</h1>
+        <h1 ng-bind-html="mc.config.title | unsafe"></h1>
     </div>
 </md-toolbar>
 

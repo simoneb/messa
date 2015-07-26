@@ -29,6 +29,7 @@
       .directive('messaModelArray', messaModelArrayDirective)
       .directive('coerceDate', coerceDateDirective)
       .filter('showHiddenModelFields', showHiddenModelFieldsFilter)
+      .filter('unsafe', unsafeFilter)
       .factory('api', api)
       .factory('httpErrorInterceptor', httpErrorInterceptor)
       .controller('EditController', EditController)
@@ -79,7 +80,6 @@
   function MainController($scope, CONFIG, api, $mdMedia, $mdDialog, $log, _) {
     var mc = this;
 
-    mc.title = CONFIG.title || 'MESSA - mongoose express scaffold with angular.js';
     mc.selectedModelName = null;
 
     mc.isLockedOpen = $mdMedia('gt-sm');
@@ -104,6 +104,11 @@
     activate();
 
     function activate() {
+      mc.config = angular.extend({
+        title: 'MESSA - mongoose express scaffold with angular.js',
+        pageTitle: 'MESSA - mongoose express scaffold with angular.js',
+      }, CONFIG);
+
       getSchemas().then(function (schemas) {
         mc.modelNames = _.keys(schemas);
 
@@ -304,7 +309,7 @@
   function ModelArrayController(_) {
     var mac = this;
 
-    if(!angular.isArray(mac.model)) {
+    if (!angular.isArray(mac.model)) {
       mac.model = [];
     }
 
@@ -484,4 +489,8 @@
       });
     }
   }
+
+  function unsafeFilter($sce) {
+    return $sce.trustAsHtml;
+  };
 })(angular, _);

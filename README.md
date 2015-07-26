@@ -41,7 +41,8 @@ The UI is built with angular.js, angular-material and angular-ui-grid.
 
 *options*: a javascript object
 
-- *options.title*: a custom title to override the default 
+- *options.title*: custom toolbar title
+- *options.pageTitle*: custom page header title
 
 *Returns*: an ExpressJS app that you can run or mount into another app
 
