@@ -24,7 +24,7 @@
                        ng-minlength="path.options.minlength"
                        ng-maxlength="path.options.maxlength">
 
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+                <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
             </md-input-container>
         </div>
 
@@ -38,7 +38,7 @@
                    ng-max="path.options.max"
                    ng-min="path.options.min">
 
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+            <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
         </md-input-container>
 
         <md-input-container ng-switch-when="Date">
@@ -51,7 +51,7 @@
                    ng-max="path.options.max"
                    ng-min="path.options.min">
 
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+            <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
         </md-input-container>
 
         <div ng-switch-when="Boolean">
@@ -60,7 +60,7 @@
                          ng-required="path.options.required && path.options.select !== false"
                          aria-label="{{pathName.titleize()}}">
                 {{pathName.titleize()}}
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+                <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
             </md-checkbox>
         </div>
 
@@ -75,7 +75,7 @@
                        ng-required="path.options.required && path.options.select !== false"
                        ng-disabled="path.options.auto">
 
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+                <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
             </md-input-container>
 
             <md-select ng-if="path.options.ref"
@@ -102,7 +102,7 @@
                       json>
             </textarea>
 
-            <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+            <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
         </md-input-container>
 
         <div ng-switch-when="Array">
@@ -120,15 +120,15 @@
                        ng-model="mc.model[pathName]"
                        ng-required="path.options.required && path.options.select !== false">
 
-                <div ng-messages="mc.form[path.path].$error" ng-messages-include="mess-model-messages"></div>
+                <div ng-messages="mc.form[path.path].$error" ng-messages-include="messa-model-messages"></div>
             </md-input-container>
 
-            <mess-model-array ng-if="!path.caster.instance"
-                              model="mc.model[pathName]"
-                              root-path-name="pathName"
-                              paths="path.schema.paths"
-                              show-hidden-fields="mc.showHiddenFields">
-            </mess-model-array>
+            <messa-model-array ng-if="!path.caster.instance"
+                               model="mc.model[pathName]"
+                               root-path-name="pathName"
+                               paths="path.schema.paths"
+                               show-hidden-fields="mc.showHiddenFields">
+            </messa-model-array>
 
         </div>
 
@@ -142,11 +142,11 @@
 </div>
 <div ng-repeat="(rootPathName, paths) in mc.nestedPaths | showHiddenModelFields:mc.showHiddenFields">
     <h2 class="md-title">{{ rootPathName }}</h2>
-    <mess-model-proxy model="mc.model[rootPathName]" paths="paths"
-                      show-hidden-fields="mc.showHiddenFields"></mess-model-proxy>
+    <messa-model-proxy model="mc.model[rootPathName]" paths="paths"
+                       show-hidden-fields="mc.showHiddenFields"></messa-model-proxy>
 </div>
 
-<script type="text/ng-template" id="mess-model-messages">
+<script type="text/ng-template" id="messa-model-messages">
     <div ng-message="required">This field is required</div>
     <div ng-message="objectId">This field should contain a valid MongoDB ObjectID</div>
     <div ng-message="json">This field should contain valid JSON</div>

@@ -1,10 +1,18 @@
 {
-  "name": "mess",
+  "name": "messa",
   "version": "0.0.1",
   "authors": [
     "Simone Busoli <simone.busoli@gmail.com>"
   ],
+  "description": "messa is an ExpressJS app to scaffold a CRUD UI for your mongoose models built with angular.js",
   "license": "MIT",
+  "keywords": [
+    "express",
+    "mongoose",
+    "scaffold",
+    "crud",
+    "angular"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",

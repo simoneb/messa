@@ -3,13 +3,13 @@
   angular.bootstrap().invoke(function ($http) {
     $http.get('config')
         .success(function (config) {
-          angular.module('app.config', []).constant('CONFIG', config);
-          angular.bootstrap(document, ['app']);
+          angular.module('messa.config', []).constant('CONFIG', config);
+          angular.bootstrap(document, ['messa']);
         });
   });
 
   angular
-      .module('app', ['app.config', 'ngMaterial', 'ngMessages', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
+      .module('messa', ['messa.config', 'ngMaterial', 'ngMessages', 'ui.grid', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
       .constant('_', _)
       .config(function ($httpProvider) {
         $httpProvider.interceptors.push('httpErrorInterceptor');
@@ -24,9 +24,9 @@
       })
       .directive('json', jsonDirective)
       .directive('objectId', objectIdDirective)
-      .directive('messModel', messModelDirective)
-      .directive('messModelProxy', messModelProxyDirective)
-      .directive('messModelArray', messModelArrayDirective)
+      .directive('messaModel', messaModelDirective)
+      .directive('messaModelProxy', messaModelProxyDirective)
+      .directive('messaModelArray', messaModelArrayDirective)
       .directive('coerceDate', coerceDateDirective)
       .filter('showHiddenModelFields', showHiddenModelFieldsFilter)
       .factory('api', api)
@@ -79,7 +79,7 @@
   function MainController($scope, CONFIG, api, $mdMedia, $mdDialog, $log, _) {
     var mc = this;
 
-    mc.title = CONFIG.title || 'MESS - mongoose express scaffold';
+    mc.title = CONFIG.title || 'MESSA - mongoose express scaffold with angular.js';
     mc.selectedModelName = null;
 
     mc.isLockedOpen = $mdMedia('gt-sm');
@@ -304,6 +304,10 @@
   function ModelArrayController(_) {
     var mac = this;
 
+    if(!angular.isArray(mac.model)) {
+      mac.model = [];
+    }
+
     mac.add = add;
     mac.remove = remove;
     mac.getPaths = getPaths;
@@ -402,9 +406,9 @@
     };
   }
 
-  function messModelDirective() {
+  function messaModelDirective() {
     return {
-      require: ['^form', 'messModel'],
+      require: ['^form', 'messaModel'],
       restrict: 'E',
       scope: {
         model: '=',
@@ -421,7 +425,7 @@
     }
   }
 
-  function messModelProxyDirective($compile) {
+  function messaModelProxyDirective($compile) {
     return {
       restrict: 'E',
       scope: {
@@ -431,15 +435,15 @@
       },
       template: '<div></div>',
       link: function (scope, element, attrs) {
-        element.append("<mess-model model='model' paths='paths' show-hidden-fields='showHiddenFields'></mess-model>");
+        element.append("<messa-model model='model' paths='paths' show-hidden-fields='showHiddenFields'></messa-model>");
         $compile(element.contents())(scope);
       }
     }
   }
 
-  function messModelArrayDirective() {
+  function messaModelArrayDirective() {
     return {
-      require: ['^form', 'messModelArray'],
+      require: ['^form', 'messaModelArray'],
       restrict: 'E',
       scope: {
         model: '=',
