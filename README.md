@@ -39,6 +39,17 @@ messa(mongoose).listen(3000);
 
 *Returns*: an ExpressJS app that you can run or mount into another app
 
+## Features
+
+- supports most types of mongoose schemas
+- client-side validation based on mongoose validators (where possible)
+
+## Limitations
+
+- limited support for Array schema types, except for arrays of nested schemas, which is well supported
+
+Please do not use with production data!
+
 ## Built on top of these great open source projects
 
 - ExpressJS
