@@ -22,117 +22,13 @@
 
         angular.element($window).on('load resize', _.debounce(resize, 100));
       })
-      .directive('json', function () {
-        return {
-          restrict: 'A',
-          require: 'ngModel',
-          link: function (scope, elm, attrs, ctrl) {
-            ctrl.$validators.json = function (modelValue, viewValue) {
-              if (ctrl.$isEmpty(modelValue)) {
-                // consider empty models to be valid
-                return true;
-              }
-
-              try {
-                angular.fromJson(viewValue);
-                return true;
-              } catch (err) {
-                return false;
-              }
-            };
-          }
-        };
-      })
-      .directive('objectId', function () {
-        return {
-          restrict: 'A',
-          require: 'ngModel',
-          link: function (scope, elm, attrs, ctrl) {
-            ctrl.$validators.objectId = function (modelValue, viewValue) {
-              if (ctrl.$isEmpty(modelValue)) {
-                // consider empty models to be valid
-                return true;
-              }
-
-              return /^[a-fA-F0-9]{24}$/.test(viewValue);
-            };
-          }
-        };
-      })
-      .directive('messModel', function () {
-        return {
-          require: ['^form', 'messModel'],
-          restrict: 'E',
-          scope: {
-            model: '=',
-            paths: '=',
-            showHiddenFields: '='
-          },
-          link: function (scope, element, attrs, ctrls) {
-            ctrls[1].form = ctrls[0];
-          },
-          templateUrl: 'templates/model.html',
-          controller: 'ModelController',
-          controllerAs: 'mc',
-          bindToController: true
-        }
-      })
-      .directive('messModelProxy', function ($compile) {
-        return {
-          restrict: 'E',
-          scope: {
-            model: '=',
-            paths: '=',
-            showHiddenFields: '='
-          },
-          template: '<div></div>',
-          link: function (scope, element, attrs) {
-            element.append("<mess-model model='model' paths='paths' show-hidden-fields='showHiddenFields'></mess-model>");
-            $compile(element.contents())(scope);
-          }
-        }
-      })
-      .directive('messModelArray', function () {
-        return {
-          require: ['^form', 'messModelArray'],
-          restrict: 'E',
-          scope: {
-            model: '=',
-            paths: '=',
-            rootPathName: '=',
-            showHiddenFields: '='
-          },
-          link: function (scope, element, attrs, ctrls) {
-            ctrls[1].form = ctrls[0];
-          },
-          templateUrl: 'templates/modelArray.html',
-          controller: 'ModelArrayController',
-          controllerAs: 'mac',
-          bindToController: true
-        }
-      })
-      .directive('coerceDate', function () {
-        return {
-          restrict: 'A',
-          link: function (scope, element, attrs) {
-            var split = attrs.coerceDate.split(',');
-            var model = scope.$eval(split[0]);
-            var pathName = scope.$eval(split[1]);
-
-            if (model[pathName])
-              model[pathName] = new Date(model[pathName]);
-          }
-        }
-      })
-      .filter('showHiddenModelFields', function () {
-        return function (paths, show) {
-          if (show) return paths;
-
-          return _.pick(paths, function (value, key) {
-            return !/^_/.test(key);
-          });
-        }
-      })
+      .directive('json', jsonDirective)
+      .directive('objectId', objectIdDirective)
+      .directive('messModel', messModelDirective)
+      .directive('messModelProxy', messModelProxyDirective)
+      .directive('messModelArray', messModelArrayDirective)
+      .directive('coerceDate', coerceDateDirective)
+      .filter('showHiddenModelFields', showHiddenModelFieldsFilter)
       .factory('api', api)
       .factory('httpErrorInterceptor', httpErrorInterceptor)
       .controller('EditController', EditController)
@@ -467,4 +363,121 @@
     }
   }
 
+  function jsonDirective() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ctrl) {
+        ctrl.$validators.json = function (modelValue, viewValue) {
+          if (ctrl.$isEmpty(modelValue)) {
+            // consider empty models to be valid
+            return true;
+          }
+
+          try {
+            angular.fromJson(viewValue);
+            return true;
+          } catch (err) {
+            return false;
+          }
+        };
+      }
+    };
+  }
+
+  function objectIdDirective() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function (scope, elm, attrs, ctrl) {
+        ctrl.$validators.objectId = function (modelValue, viewValue) {
+          if (ctrl.$isEmpty(modelValue)) {
+            // consider empty models to be valid
+            return true;
+          }
+
+          return /^[a-fA-F0-9]{24}$/.test(viewValue);
+        };
+      }
+    };
+  }
+
+  function messModelDirective() {
+    return {
+      require: ['^form', 'messModel'],
+      restrict: 'E',
+      scope: {
+        model: '=',
+        paths: '=',
+        showHiddenFields: '='
+      },
+      link: function (scope, element, attrs, ctrls) {
+        ctrls[1].form = ctrls[0];
+      },
+      templateUrl: 'templates/model.html',
+      controller: 'ModelController',
+      controllerAs: 'mc',
+      bindToController: true
+    }
+  }
+
+  function messModelProxyDirective($compile) {
+    return {
+      restrict: 'E',
+      scope: {
+        model: '=',
+        paths: '=',
+        showHiddenFields: '='
+      },
+      template: '<div></div>',
+      link: function (scope, element, attrs) {
+        element.append("<mess-model model='model' paths='paths' show-hidden-fields='showHiddenFields'></mess-model>");
+        $compile(element.contents())(scope);
+      }
+    }
+  }
+
+  function messModelArrayDirective() {
+    return {
+      require: ['^form', 'messModelArray'],
+      restrict: 'E',
+      scope: {
+        model: '=',
+        paths: '=',
+        rootPathName: '=',
+        showHiddenFields: '='
+      },
+      link: function (scope, element, attrs, ctrls) {
+        ctrls[1].form = ctrls[0];
+      },
+      templateUrl: 'templates/modelArray.html',
+      controller: 'ModelArrayController',
+      controllerAs: 'mac',
+      bindToController: true
+    }
+  }
+
+  function coerceDateDirective() {
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        var split = attrs.coerceDate.split(',');
+        var model = scope.$eval(split[0]);
+        var pathName = scope.$eval(split[1]);
+
+        if (model[pathName])
+          model[pathName] = new Date(model[pathName]);
+      }
+    }
+  }
+
+  function showHiddenModelFieldsFilter() {
+    return function (paths, show) {
+      if (show) return paths;
+
+      return _.pick(paths, function (value, key) {
+        return !/^_/.test(key);
+      });
+    }
+  }
 })(angular, _);
