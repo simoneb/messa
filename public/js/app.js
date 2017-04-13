@@ -86,6 +86,7 @@
     mc.schemas = null;
     mc.gridOptions = {
       // selection
+      enableFiltering: true,
       multiselect: false,
       enableRowHeaderSelection: false,
       enableFullRowSelection: true,
