@@ -77,8 +77,10 @@
     }
   }
 
-  function MainController($scope, CONFIG, api, $mdMedia, $mdDialog, $log, _) {
+  function MainController($scope, CONFIG, api, $mdMedia, $mdDialog, $log, $interval, _) {
     var mc = this;
+
+    mc.updater = null;
 
     mc.selectedModelName = null;
 
@@ -86,6 +88,7 @@
     mc.schemas = null;
     mc.gridOptions = {
       // selection
+      enableFiltering: true,
       multiselect: false,
       enableRowHeaderSelection: false,
       enableFullRowSelection: true,
@@ -172,7 +175,12 @@
 
       mc.gridOptions.columnDefs = createGridColumns(mc.selectedSchema);
 
+      $interval.cancel(mc.updater)
+      mc.updater = $interval(function () {
+        getModelData(mc.selectedModelName, mc.selectedSchema);
+      }, 3000)
       getModelData(mc.selectedModelName, mc.selectedSchema);
+
     }
 
     function createGridColumns(schema) {
